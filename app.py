@@ -26,8 +26,9 @@ def database():
 	if 'db' not in g:
 		g.db = mysql.connector.connect(
 			user=DB_USER, password=DB_PASS,
-			host=DB_HOST, database='Dither',
-			buffered=True)
+			database='Dither',
+			host='mysql', buffered=True)
+
 	try:
 		yield g.db
 	finally:
@@ -46,8 +47,6 @@ def register():
 				db.commit()
 				session['username'] = username
 			return redirect('/homepage')
-
-			flash(error)
 	return render_template('register.html')
 
 @app.route('/login', methods=('GET', 'POST'))
@@ -56,7 +55,6 @@ def login():
 		username = request.form['username']
 		password = request.form['password']
 		with database() as db:
-			#try:
 			with db.cursor() as cur:
 				cur.execute('SELECT password_hash FROM Users WHERE username = %s LIMIT 1', [username])
 				hash = str(cur.fetchone()[0])
@@ -75,6 +73,14 @@ def get_followers(username, db):
 	with db.cursor() as cur:
 		cur.execute('SELECT COUNT(*) FROM Followers WHERE followee_id = %s', [get_user_id(username, db)])
 		return int(cur.fetchone()[0])
+
+@app.route('/makedb')
+def makedb():
+	with database() as db:
+		with open('sql/schema.sql', 'r') as f:
+			with db.cursor() as cur:
+				cur.execute(f.read())
+	return 'hi'
 
 @app.route('/homepage')
 def homepage():

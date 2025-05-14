@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:5000"
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /code
+  mysql:
+    image: "mysql:9"
+    environment: 
+      - "MYSQL_ROOT_PASSWORD=letmein"
+    ports:
+      - "3306:3306"

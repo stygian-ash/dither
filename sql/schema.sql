@@ -1,10 +1,9 @@
-DROP SCHEMA IF EXISTS Dither;
-CREATE SCHEMA Dither;
+CREATE SCHEMA IF NOT EXISTS Dither;
 USE Dither;
 
-CREATE TABLE Users (
+CREATE TABLE IF NOT EXISTS Users (
 	user_id INT PRIMARY KEY AUTO_INCREMENT,
-    username TINYTEXT,
+    username VARCHAR(255) UNIQUE,
     displayname TINYTEXT,
     bio TEXT,
     location TINYTEXT,
@@ -15,7 +14,7 @@ CREATE TABLE Users (
     is_admin BOOL
 );
 
-CREATE TABLE Posts (
+CREATE TABLE IF NOT EXISTS Posts (
 	post_id INT PRIMARY KEY AUTO_INCREMENT,
     content TEXT,
     author_id INT,
@@ -27,7 +26,7 @@ CREATE TABLE Posts (
     FOREIGN KEY(quotes) REFERENCES Posts(post_id)
 );
 
-CREATE TABLE Media (
+CREATE TABLE IF NOT EXISTS Media (
 	media_id INT PRIMARY KEY AUTO_INCREMENT,
     mime_type TINYTEXT,
     file LONGBLOB,
@@ -36,7 +35,7 @@ CREATE TABLE Media (
     FOREIGN KEY(post_id) REFERENCES Posts(post_id)
 );
 
-CREATE TABLE Interactions (
+CREATE TABLE IF NOT EXISTS Interactions (
 	user_id INT,
     post_id INT,
     type ENUM('like', 'repost'),
@@ -46,7 +45,7 @@ CREATE TABLE Interactions (
     FOREIGN KEY(post_id) REFERENCES Posts(post_id)
 );
 
-CREATE TABLE Followers (
+CREATE TABLE IF NOT EXISTS Followers (
 	follower_id INT,
     followee_id INT,
     PRIMARY KEY(follower_id, followee_id),
@@ -54,12 +53,14 @@ CREATE TABLE Followers (
     FOREIGN KEY(followee_id) REFERENCES Users(user_id)
 );
 
-CREATE TABLE Reports (
+CREATE TABLE IF NOT EXISTS Reports (
 	report_id INT PRIMARY KEY AUTO_INCREMENT,
     post_id INT,
     reported_by INT,
-    reason ENUM('hate', 'misinformation', 'impersonation', 'violent speech', 'sexual content', 'harrassment', 'illegal', 'self-harm', 'doxxing'),
+    reason TEXT,
     note TEXT,
     FOREIGN KEY(post_id) REFERENCES Posts(post_id),
     FOREIGN KEY(reported_by) REFERENCES Users(user_id)
 );
+
+-- vim:ft=mysql:
