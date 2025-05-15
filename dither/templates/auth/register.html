@@ -1,0 +1,20 @@
+{% extends 'base.html'%}
+{% block header %}
+	<h1>{% block title %}Register{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+	<form action="{{ url_for('auth.register') }}" method="post">
+		<label for="username">Username:</label>
+		<input type="text" name="username" id="username" required />
+		<br>
+		<label for="password">Password:</label>
+		<input type="password" name="password" id="password" required />
+		<br>
+		<input type="submit" value="Register" />
+	</form>
+	<br>
+	Already a member? <a href="{{ url_for('auth.login') }}">Log in!</a>
+{% endblock %}
+
+{# vim: set ft=html.jinja2: #}
